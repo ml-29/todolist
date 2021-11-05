@@ -3,13 +3,14 @@
 	<head>
 		<meta charset="utf-8">
 		<title>To-do list with vue</title>
-		<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+		<script src="https://unpkg.com/vue@next"></script>
 		<script src="https://kit.fontawesome.com/739b8fcf94.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
-		<div id="app">
+		<!-- <div id="app">
 			<li v-for="todo in todos">
-				<span><i v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i></span><span>{{ todo.text }}</span>
+				<span><i v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i></span>
+				<span>{{ todo.text }}</span>
 			</li>
 		</div>
 		<script>
@@ -25,6 +26,6 @@
 				methods: {
 				}
 			})
-		</script>
+		</script> -->
 	</body>
 </html>
