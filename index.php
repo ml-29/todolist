@@ -7,20 +7,34 @@
 		<script src="https://kit.fontawesome.com/739b8fcf94.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
-		<div id="counter">
-			Counter: {{ counter }}
+		<div id="list-rendering">
+			<ul>
+				<li v-for="todo in todos">
+					<i v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i>
+					{{ todo.text }}
+				</li>
+			</ul>
 		</div>
 
 		<script>
-			const Counter = {
+			const ListRendering = {
 				data() {
 					return {
-						counter: 0
+						todos: [
+							{ text: 'Learn JavaScript', done : false },
+							{ text: 'Learn Vue', done : true },
+							{ text: 'Build something awesome', done : false }
+						]
 					}
 				}
 			}
-			Vue.createApp(Counter).mount('#counter');
+			Vue.createApp(ListRendering).mount('#list-rendering')
 		</script>
+		<style media="screen">
+			ul li {
+				list-style: none;
+			}
+		</style>
 		<!-- <div id="app">
 			<li v-for="todo in todos">
 				<span><i v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i></span>
