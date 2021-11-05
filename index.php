@@ -11,7 +11,7 @@
 			<ul>
 				<li v-for="todo in todos">
 					<i @click="todo.done = !todo.done" v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i>
-					{{ todo.text }}
+					<span contenteditable="true" @keyup="onEdit">{{ todo.text }}</span>
 				</li>
 			</ul>
 		</div>
@@ -26,11 +26,17 @@
 							{ text: 'Build something awesome', done : false }
 						]
 					}
+				},
+				methods:{
+					onEdit(evt){
+						var src = evt.target.innerText;
+						this.text = src;
+					}
 				}
-			}
-			Vue.createApp(ListRendering).mount('#list-rendering')
+			};
+			Vue.createApp(ListRendering).mount('#list-rendering');
 		</script>
-		<style media="screen">
+		<style>
 			ul li {
 				list-style: none;
 			}
