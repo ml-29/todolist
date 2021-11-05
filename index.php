@@ -10,7 +10,7 @@
 		<div id="list-rendering">
 			<ul>
 				<li v-for="todo in todos">
-					<i v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i>
+					<i @click="todo.done = !todo.done" v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i>
 					{{ todo.text }}
 				</li>
 			</ul>
@@ -35,25 +35,5 @@
 				list-style: none;
 			}
 		</style>
-		<!-- <div id="app">
-			<li v-for="todo in todos">
-				<span><i v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i></span>
-				<span>{{ todo.text }}</span>
-			</li>
-		</div>
-		<script>
-			var app = new Vue({
-				el: '#app',
-				data: {
-					todos: [
-				      { text: 'Learn JavaScript', done : false },
-				      { text: 'Learn Vue', done : true },
-				      { text: 'Build something awesome', done : false }
-				    ]
-				},
-				methods: {
-				}
-			})
-		</script> -->
 	</body>
 </html>
