@@ -7,6 +7,20 @@
 		<script src="https://kit.fontawesome.com/739b8fcf94.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
+		<div id="counter">
+			Counter: {{ counter }}
+		</div>
+
+		<script>
+			const Counter = {
+				data() {
+					return {
+						counter: 0
+					}
+				}
+			}
+			Vue.createApp(Counter).mount('#counter');
+		</script>
 		<!-- <div id="app">
 			<li v-for="todo in todos">
 				<span><i v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i></span>
