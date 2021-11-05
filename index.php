@@ -9,7 +9,7 @@
 	<body>
 		<div id="app">
 			<li v-for="todo in todos">
-				<span><i class="far fa-square"></i></span><span>{{ todo.text }}</span>
+				<span><i v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i></span><span>{{ todo.text }}</span>
 			</li>
 		</div>
 		<script>
@@ -17,10 +17,12 @@
 				el: '#app',
 				data: {
 					todos: [
-				      { text: 'Learn JavaScript' },
-				      { text: 'Learn Vue' },
-				      { text: 'Build something awesome' }
+				      { text: 'Learn JavaScript', done : false },
+				      { text: 'Learn Vue', done : true },
+				      { text: 'Build something awesome', done : false }
 				    ]
+				},
+				methods: {
 				}
 			})
 		</script>
