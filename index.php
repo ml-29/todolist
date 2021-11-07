@@ -7,34 +7,39 @@
 		<script src="https://kit.fontawesome.com/739b8fcf94.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
-		<div id="list-rendering">
+		<div id="todo-list">
 			<ul>
-				<li v-for="todo in todos">
-					<i @click="todo.done = !todo.done" v-bind:class="{ 'far fa-square': !todo.done, 'far fa-check-square': todo.done }"></i>
-					<span contenteditable="true" @keyup="onEdit">{{ todo.text }}</span>
+				<li v-for="(task, index) in tasks" :key="index">
+					<i @click="task.done = !task.done" v-bind:class="{ 'far fa-square': !task.done, 'far fa-check-square': task.done }"></i>
+					<span contenteditable="true" @keyup="renameTask($event, index)" @keyup.enter="addTaskAfter($event, index, task)">{{ task.text }}</span>
 				</li>
 			</ul>
 		</div>
 
 		<script>
-			const ListRendering = {
+			const app = Vue.createApp({
 				data() {
 					return {
-						todos: [
+						tasks : [
 							{ text: 'Learn JavaScript', done : false },
 							{ text: 'Learn Vue', done : true },
-							{ text: 'Build something awesome', done : false }
+							{ text: 'Build something awesome', done : false}
 						]
 					}
 				},
-				methods:{
-					onEdit(evt){
-						var src = evt.target.innerText;
-						this.text = src;
+				methods : {
+					addTaskAfter(evt, index, task){
+						var t = evt.target.innerText.split('\n');
+						task.text = t[0];
+						this.tasks.splice(index + 1, 0, {text : t[1], done : false});
+					},
+					renameTask(evt, index){
+						this.tasks[index].text = evt.target.innerText;
 					}
 				}
-			};
-			Vue.createApp(ListRendering).mount('#list-rendering');
+			});
+
+			app.mount('#todo-list');
 		</script>
 		<style>
 			ul li {
