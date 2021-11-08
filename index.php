@@ -11,13 +11,12 @@
 			<ul>
 				<li v-for="(task, index) in tasks" :key="index">
 					<i @click="task.done = !task.done" v-bind:class="{ 'far fa-square': !task.done, 'far fa-check-square': task.done }"></i>
-					<span contenteditable="true" @keyup="renameTask($event, index)" @keyup.enter="addTaskAfter($event, index, task)" @keyup.delete="removeTaskBefore($event, index)">{{ task.text }}</span>
+					<span class="task-name" contenteditable="true" @keyup="renameTask($event, index)" @keyup.enter="addTaskAfter($event, index, task)" @keyup.delete="removeTaskBefore($event, index)">{{ task.text }}</span>
 				</li>
 			</ul>
 		</div>
 
 		<script>
-			//TODO : fix bug happening when pressing enter at the end of the task name
 			function getCaretPosition(editableDiv) {
 				var caretPos = 0,
 				sel, range;
@@ -55,13 +54,25 @@
 				},
 				methods : {
 					addTaskAfter(evt, index, task){
-						var t = evt.target.innerText.split('\n');
-						task.text = t[0];
+						var t = evt.target.innerText.split('\n', 2);
+						console.log(JSON.stringify(evt.target.innerText));
+						console.log(t);
+						this.tasks[index].text = t[0].trim() + '\n';
 						this.tasks.splice(index + 1, 0, {text : t[1], done : false});
 						// TODO : place cursor at the begining of new task
 					},
+					removeTaskBefore(evt, index){
+						// if there's nothing before cursor and there's a task before the current one
+						var i = index - 1;
+						var b = getCaretPosition(evt.target);
+						if(i > 0 && b.length == 0){
+
+						}
+					},
 					renameTask(evt, index){
-						this.tasks[index].text = evt.target.innerText;
+						if(evt.keycode != 13){
+							this.tasks[index].text = evt.target.innerText.trim() + '\n';
+						}
 					}
 				}
 			});
@@ -71,6 +82,10 @@
 		<style>
 			ul li {
 				list-style: none;
+			}
+			.task-name, i {
+				display: inline-block;
+				min-width: 10
 			}
 		</style>
 	</body>
