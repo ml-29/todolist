@@ -11,7 +11,9 @@
 			<ul>
 				<li v-for="(task, index) in tasks" :key="index">
 					<i @click="task.done = !task.done" v-bind:class="{ 'far fa-square': !task.done, 'far fa-check-square': task.done }"></i>
-					<span class="task-edit" contenteditable="true" @keyup.enter="addTaskAfter($event, index, task)" @keyup.delete="removeTaskBefore($event, index)" @keyup="renameTask($event, index)">{{ task.text }}</span>
+					<!-- <span @keyup.enter="addTaskAfter($event, index, task)" @keyup.delete="removeTaskBefore($event, index)">{{ task.text }}</span> -->
+					<!-- <span v-if="editing.index != index" @click="toggleEdit(index)">{{ task.text }}</span> -->
+					<input @keyup.enter="splitTask($event.target.value, $event.target.selectionStart, index)" @keyup="renameTask(index, $event.target.value)" type="text" name="task-edit" v-bind:value="task.text">
 				</li>
 			</ul>
 		</div>
@@ -43,6 +45,7 @@
 			}
 
 			//BUG : pressing suppr while editing doesn't do anything
+			// TODO : place cursor where it should be when editing
 
 			function moveCursor(elem, index){
 				if(elem != null && index != null) {
@@ -70,26 +73,22 @@
 							{ text: 'Learn Vue', done : true },
 							{ text: 'Build something awesome', done : false}
 						],
-						cursorPos : {
-							taskIndex : null,
+						editing : {
+							index : null,
 							charAt : null
 						}
 					}
 				},
-				updated(){
+				changed(){
 					var tEl = document.getElementsByClassName('task-edit');
 					moveCursor(tEl[this.cursorPos.taskIndex], this.cursorPos.charAt);
 				},
 				methods : {
-					addTaskAfter(evt, index, task){
-						var t = evt.target.innerText.split('\n', 2);
-						this.tasks[index].text = t[0].replace('\n','');
-						evt.target.innerText = t[0].replace('\n','');
-						this.tasks.splice(index + 1, 0, {text : t[1].replace('\n','') , done : false});
-						//set info to place cursor at the begining of new task on next render
-						this.cursorPos.taskIndex = index + 1;
-						this.cursorPos.charAt = 0;
-						// TODO : place cursor at the begining of new task
+					splitTask(value, charat, index){
+						var t1 = value.substring(0, charat);
+						var t2 = value.substring(charat);
+						this.tasks[index].text = t1;
+						this.tasks.splice(index + 1, 0, {text : t2 , done : false});
 					},
 					removeTaskBefore(evt, index){
 						// if there's nothing before cursor and there's a task before the current one
@@ -99,11 +98,18 @@
 						// 	this.tasks.splice(i, 1);
 						// }
 					},
-					renameTask(evt, index){
-						this.tasks[index].text = evt.target.innerText;
-						// this.moveCursor(evt.target, evt.target.innerText.length);
-						console.log(evt.target.innerText);
-					}
+					// renameTask(evt, index){
+					// 	this.tasks[index].text = evt.target.innerText;
+					// 	this.cursorPos.taskIndex = index;
+					// 	this.cursorPos.charAt = evt.target.innerText.length - 1;
+					// },
+					renameTask(key, value){
+						this.tasks[key].text = value;
+					},
+					updateSkillObject(value, key) {
+				      this.tasks[key].text = value;
+				      console.log(this.tasks);
+				    },
 				}
 			});
 
@@ -113,6 +119,9 @@
 			ul li {
 				list-style: none;
 			}
+			/* input {
+				border: none;
+			} */
 		</style>
 	</body>
 </html>
