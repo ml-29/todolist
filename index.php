@@ -11,7 +11,7 @@
 			<ul>
 				<li v-for="(task, index) in tasks" :key="index">
 					<i @click="task.done = !task.done" v-bind:class="{ 'far fa-square': !task.done, 'far fa-check-square': task.done }"></i>
-					<span class="task-name" contenteditable="true" @keyup="renameTask($event, index)" @keyup.enter="addTaskAfter($event, index, task)" @keyup.delete="removeTaskBefore($event, index)">{{ task.text }}</span>
+					<span class="task-name" contenteditable="true" @keyup.enter="addTaskAfter($event, index, task)" @keyup.delete="removeTaskBefore($event, index)" @keyup="renameTask($event, index)">{{ task.text }}</span>
 				</li>
 			</ul>
 		</div>
@@ -42,6 +42,13 @@
 				return caretPos;
 			}
 
+			 function setup() {
+			    // mounted
+			    onUpdated(() => {
+			      console.log('Component is mounted!')
+			  });
+			  }
+
 			const app = Vue.createApp({
 				data() {
 					return {
@@ -49,29 +56,56 @@
 							{ text: 'Learn JavaScript', done : false },
 							{ text: 'Learn Vue', done : true },
 							{ text: 'Build something awesome', done : false}
-						]
+						],
+						cursorPos : [null, null]//element and index in which to place cursor
 					}
 				},
 				methods : {
+					// onkeydown(evt, index, task){
+					// 	if(evt.keycode == 13){
+					// 		this.addTaskAfter(evt, index);
+					// 	}else if(evt.keycode == 46){
+					// 		this.removeTaskBefore(evt, index);
+					// 	}else{
+					// 		this.renameTask(evt, index);
+					// 	}
+					// },
 					addTaskAfter(evt, index, task){
 						var t = evt.target.innerText.split('\n', 2);
-						console.log(JSON.stringify(evt.target.innerText));
-						console.log(t);
-						this.tasks[index].text = t[0].trim() + '\n';
-						this.tasks.splice(index + 1, 0, {text : t[1], done : false});
+						this.tasks[index].text = t[0].replace('\n','');
+						evt.target.innerText = t[0].replace('\n','');
+						this.tasks.splice(index + 1, 0, {text : t[1].replace('\n','') , done : false});
 						// TODO : place cursor at the begining of new task
 					},
 					removeTaskBefore(evt, index){
 						// if there's nothing before cursor and there's a task before the current one
-						var i = index - 1;
-						var b = getCaretPosition(evt.target);
-						if(i > 0 && b.length == 0){
-
-						}
+						// var i = index - 1;
+						// var b = getCaretPosition(evt.target);
+						// if(i > 0 && b.length == 0){
+						// 	this.tasks.splice(i, 1);
+						// }
 					},
 					renameTask(evt, index){
-						if(evt.keycode != 13){
-							this.tasks[index].text = evt.target.innerText.trim() + '\n';
+						this.tasks[index].text = evt.target.innerText;
+						this.moveCursor(evt.target, evt.target.innerText.length);
+						console.log(evt.target.innerText);
+					},
+					moveCursor(elem, index){
+						console.log(index);
+						if(elem != null && index != null) {
+							if(elem.createTextRange) {
+								var range = elem.createTextRange();
+								range.move('character', caretPos);
+								range.select();
+							}
+							else {
+								if(elem.selectionStart) {
+									elem.focus();
+									elem.setSelectionRange(caretPos, caretPos);
+								}else{
+									elem.focus();
+								}
+							}
 						}
 					}
 				}
