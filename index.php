@@ -42,9 +42,6 @@
 				return caretPos;
 			}
 
-			//BUG : pressing suppr while editing doesn't do anything
-			// TODO : place cursor where it should be when editing
-
 			function moveCursor(elem, index){
 				if(elem != null && index != null) {
 					if(elem.createTextRange) {
