@@ -11,9 +11,7 @@
 			<ul>
 				<li v-for="(task, index) in tasks" :key="index">
 					<i @click="task.done = !task.done" v-bind:class="{ 'far fa-square': !task.done, 'far fa-check-square': task.done }"></i>
-					<!-- <span @keyup.enter="addTaskAfter($event, index, task)" @keyup.delete="removeTaskBefore($event, index)">{{ task.text }}</span> -->
-					<!-- <span v-if="editing.index != index" @click="toggleEdit(index)">{{ task.text }}</span> -->
-					<input @keyup.enter="splitTask($event.target.value, $event.target.selectionStart, index)" @keyup="renameTask(index, $event.target.value)" type="text" name="task-edit" v-bind:value="task.text">
+					<input class="task-edit" v-model="task.text" @keyup.enter="onEnter($event.target.value, $event.target.selectionStart, $event.target.selectionEnd, index)" @keyup.delete="onDelete($event.target.selectionStart, index, $event.target.value)" type="text" name="task-edit">
 				</li>
 			</ul>
 		</div>
@@ -51,13 +49,13 @@
 				if(elem != null && index != null) {
 					if(elem.createTextRange) {
 						var range = elem.createTextRange();
-						range.move('character', caretPos);
+						range.move('character', index);
 						range.select();
 					}
 					else {
 						if(elem.selectionStart) {
 							elem.focus();
-							elem.setSelectionRange(caretPos, caretPos);
+							elem.setSelectionRange(index, index);
 						}else{
 							elem.focus();
 						}
@@ -73,43 +71,32 @@
 							{ text: 'Learn Vue', done : true },
 							{ text: 'Build something awesome', done : false}
 						],
-						editing : {
-							index : null,
-							charAt : null
+						cursor : {
+							task : null,
+							char : null
 						}
 					}
 				},
-				changed(){
+				updated(){
 					var tEl = document.getElementsByClassName('task-edit');
-					moveCursor(tEl[this.cursorPos.taskIndex], this.cursorPos.charAt);
+					moveCursor(tEl[this.cursor.task], this.cursor.char);
 				},
 				methods : {
-					splitTask(value, charat, index){
-						var t1 = value.substring(0, charat);
-						var t2 = value.substring(charat);
+					onEnter(value, selstart, selend, index){
+						var t1 = value.substring(0, selstart);
+						var t2 = value.substring(selend);
 						this.tasks[index].text = t1;
 						this.tasks.splice(index + 1, 0, {text : t2 , done : false});
+						//place cursor at the begining of next line
+						this.cursor.task = index + 1;
+						this.cursor.char = 0;
 					},
-					removeTaskBefore(evt, index){
-						// if there's nothing before cursor and there's a task before the current one
-						// var i = index - 1;
-						// var b = getCaretPosition(evt.target);
-						// if(i > 0 && b.length == 0){
-						// 	this.tasks.splice(i, 1);
-						// }
-					},
-					// renameTask(evt, index){
-					// 	this.tasks[index].text = evt.target.innerText;
-					// 	this.cursorPos.taskIndex = index;
-					// 	this.cursorPos.charAt = evt.target.innerText.length - 1;
-					// },
-					renameTask(key, value){
-						this.tasks[key].text = value;
-					},
-					updateSkillObject(value, key) {
-				      this.tasks[key].text = value;
-				      console.log(this.tasks);
-				    },
+					onDelete(selstart, index, value){
+						if(selstart == 0 && index != 0){
+							this.tasks[index - 1].text += value;
+							this.tasks.splice(index, 1);
+						}
+					}
 				}
 			});
 
@@ -119,9 +106,8 @@
 			ul li {
 				list-style: none;
 			}
-			/* input {
-				border: none;
-			} */
+			input {border:0;outline:0;}
+			input:focus {outline:none!important;}
 		</style>
 	</body>
 </html>
